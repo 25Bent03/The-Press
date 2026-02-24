@@ -30,6 +30,7 @@
     "@solana/wallet-adapter-wallets": "^0.19.37",
     "@solana/web3.js": "1.98.4",
     "@streamflow/stream": "^11.0.0",
+    "@supabase/supabase-js": "^2.97.0",
     "bn.js": "^5.2.2",
     "bs58": "^6.0.0",
     "next": "16.0.10",
