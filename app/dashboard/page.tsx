@@ -117,7 +117,7 @@ export default function DashboardPage() {
         throw new Error(result.error || "Failed to select winner");
       }
 
-      alert("Winner selected successfully! Tokens will be sent automatically when the deadline is reached.");
+      alert("Winner selected successfully! Tokens sent to winner.");
       setSelectedTask(null);
       setWinnerWallet("");
       loadTasks();
@@ -211,12 +211,12 @@ export default function DashboardPage() {
                     </div>
                   </div>
 
-                  {/* Transaction ID */}
+                  {/* Transaction ID - MAINNET */}
                   {task.escrow_signature && (
                     <div className="bg-gray-50 border-2 border-gray-200 rounded-lg p-4 mb-4">
                       <p className="font-bold text-xs text-gray-600 mb-2">ESCROW TRANSACTION</p>
                       <a 
-                        href={`https://solscan.io/tx/${task.escrow_signature}?cluster=devnet`}
+                        href={`https://solscan.io/tx/${task.escrow_signature}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="font-mono text-sm text-[#3C5A99] hover:underline break-all block"
@@ -224,6 +224,22 @@ export default function DashboardPage() {
                         {shortenTxSignature(task.escrow_signature)}
                       </a>
                       <p className="text-xs text-gray-500 mt-1">Click to view on Solscan</p>
+                    </div>
+                  )}
+
+                  {/* Payout Transaction - MAINNET */}
+                  {task.payout_signature && (
+                    <div className="bg-green-50 border-2 border-green-200 rounded-lg p-4 mb-4">
+                      <p className="font-bold text-xs text-green-600 mb-2">PAYOUT TRANSACTION</p>
+                      <a 
+                        href={`https://solscan.io/tx/${task.payout_signature}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-mono text-sm text-green-700 hover:underline break-all block"
+                      >
+                        {shortenTxSignature(task.payout_signature)}
+                      </a>
+                      <p className="text-xs text-green-600 mt-1">Click to view on Solscan</p>
                     </div>
                   )}
 

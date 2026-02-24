@@ -6,7 +6,6 @@ import bs58 from "bs58";
 
 export async function POST(request: NextRequest) {
   try {
-    // Get all tasks that need payout
     const now = new Date().toISOString();
     
     const { data: tasks, error: fetchError } = await supabase
@@ -28,9 +27,9 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    const connection = new Connection("https://api.devnet.solana.com", "confirmed");
+    // ✅ MAINNET
+    const connection = new Connection("https://api.mainnet-beta.solana.com", "confirmed");
     
-    // Get escrow keypair from private key
     const escrowPrivateKey = process.env.ESCROW_PRIVATE_KEY;
     if (!escrowPrivateKey) {
       return NextResponse.json({ error: "Escrow private key not configured" }, { status: 500 });
@@ -47,11 +46,9 @@ export async function POST(request: NextRequest) {
         const winnerPublicKey = new PublicKey(task.winner_wallet);
         const tokenMint = new PublicKey(task.token_mint);
 
-        // Get token accounts
         const escrowTokenAccount = await getAssociatedTokenAddress(tokenMint, escrowKeypair.publicKey);
         const winnerTokenAccount = await getAssociatedTokenAddress(tokenMint, winnerPublicKey);
 
-        // Create transfer instruction
         const transferIx = createTransferInstruction(
           escrowTokenAccount,
           winnerTokenAccount,
@@ -59,18 +56,15 @@ export async function POST(request: NextRequest) {
           task.token_amount
         );
 
-        // Create and send transaction
         const transaction = new Transaction().add(transferIx);
         transaction.feePayer = escrowKeypair.publicKey;
         transaction.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
 
-        // Sign and send
         transaction.sign(escrowKeypair);
         const signature = await connection.sendRawTransaction(transaction.serialize());
         
         await connection.confirmTransaction(signature, "confirmed");
 
-        // Update task status
         await supabase
           .from("tasks")
           .update({ 
@@ -79,21 +73,12 @@ export async function POST(request: NextRequest) {
           })
           .eq("id", task.id);
 
-        results.push({
-          taskId: task.id,
-          success: true,
-          signature
-        });
-
+        results.push({ taskId: task.id, success: true, signature });
         console.log(`✅ Task ${task.id} paid out: ${signature}`);
 
       } catch (error: any) {
         console.error(`❌ Error processing task ${task.id}:`, error);
-        results.push({
-          taskId: task.id,
-          success: false,
-          error: error.message
-        });
+        results.push({ taskId: task.id, success: false, error: error.message });
       }
     }
 

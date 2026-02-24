@@ -18,8 +18,9 @@ export default function AppWalletProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const network = WalletAdapterNetwork.Devnet;
-  const endpoint = useMemo(() => "https://api.devnet.solana.com", []);
+  // MAINNET CONFIGURATION
+  const network = WalletAdapterNetwork.Mainnet;
+  const endpoint = useMemo(() => "https://api.mainnet-beta.solana.com", []);
 
   const wallets = useMemo(
     () => [

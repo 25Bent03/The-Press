@@ -28,14 +28,11 @@ export default function CreateTaskPage() {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [transactionSignature, setTransactionSignature] = useState("");
 
-  // Welcome Modal State - only show if NOT connected
   const [showWelcomeModal, setShowWelcomeModal] = useState(true);
 
-  // Typewriter effect for modal text
   const [displayedModalText, setDisplayedModalText] = useState("");
   const modalFullText = "Please connect your wallet to create tasks and interact with the platform. Without a connected wallet, you won't be able to create tasks or lock tokens in escrow.";
 
-  // Typewriter effect for create page speech bubble
   const [displayedPageText, setDisplayedPageText] = useState("");
   const pageFullText = "Create your first task and lock tokens in escrow, or check out our Guide to get started!";
 
@@ -43,14 +40,12 @@ export default function CreateTaskPage() {
     setMounted(true);
   }, []);
 
-  // Close welcome modal when wallet connects
   useEffect(() => {
     if (connected) {
       setShowWelcomeModal(false);
     }
   }, [connected]);
 
-  // Typewriter effect for modal
   useEffect(() => {
     if (showWelcomeModal && !connected) {
       let index = 0;
@@ -68,7 +63,6 @@ export default function CreateTaskPage() {
     }
   }, [showWelcomeModal, connected]);
 
-  // Typewriter effect for create page speech bubble
   useEffect(() => {
     if (!showWelcomeModal) {
       let index = 0;
@@ -100,7 +94,8 @@ export default function CreateTaskPage() {
     try {
       setIsLoading(true);
 
-      const connection = new Connection("https://api.devnet.solana.com", "confirmed");
+      // MAINNET CONNECTION
+      const connection = new Connection("https://api.mainnet-beta.solana.com", "confirmed");
       const escrowPublicKey = new PublicKey(process.env.NEXT_PUBLIC_ESCROW_PUBLIC_KEY!);
       const mintPubkey = new PublicKey(tokenMint.trim());
 
@@ -243,7 +238,6 @@ export default function CreateTaskPage() {
           <div className="relative w-full max-w-lg aspect-square filter grayscale contrast-125 mt-16">
             <Image src="/mascot.png" alt="Mascot" width={800} height={800} className="object-contain w-full h-full rounded-lg" priority />
             
-            {/* Speech Bubble on Create Page */}
             {!showWelcomeModal && (
               <div className="absolute top-0 left-0 transform -translate-x-4 -translate-y-12 w-[400px]">
                 <div className="bg-white border-4 border-black rounded-2xl p-6 shadow-xl relative">
@@ -251,7 +245,6 @@ export default function CreateTaskPage() {
                     {renderPageText()}
                     <span className="animate-pulse">|</span>
                   </p>
-                  {/* Triangle pointing to mascot */}
                   <div className="absolute -bottom-4 left-12 w-0 h-0 border-l-[20px] border-l-transparent border-r-[20px] border-r-transparent border-t-[20px] border-t-black"></div>
                   <div className="absolute -bottom-[13px] left-[50px] w-0 h-0 border-l-[18px] border-l-transparent border-r-[18px] border-r-transparent border-t-[18px] border-t-white"></div>
                 </div>
@@ -378,11 +371,9 @@ export default function CreateTaskPage() {
         </div>
       </div>
 
-      {/* Welcome Modal - Only show if wallet NOT connected */}
       {showWelcomeModal && !connected && mounted && (
         <div className="fixed inset-0 backdrop-blur-md flex items-center justify-center p-4 z-50">
           <div className="relative max-w-4xl w-full flex flex-col items-center">
-            {/* Speech Bubble */}
             <div className="relative bg-white border-4 border-black rounded-3xl p-8 md:p-12 shadow-2xl">
               <div className="text-center mb-6">
                 <h2 className="text-3xl md:text-5xl font-black text-black mb-4">
@@ -413,12 +404,10 @@ export default function CreateTaskPage() {
                 Browse Without Wallet
               </button>
 
-              {/* Speech bubble triangle pointing down */}
               <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[30px] border-l-transparent border-r-[30px] border-r-transparent border-t-[30px] border-t-black"></div>
               <div className="absolute -bottom-[26px] left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[26px] border-l-transparent border-r-[26px] border-r-transparent border-t-[26px] border-t-white"></div>
             </div>
 
-            {/* Mascot below speech bubble - BIGGER */}
             <div className="w-[500px] h-[500px] filter grayscale contrast-125 -mt-16">
               <Image src="/mascot.png" alt="Mascot" width={800} height={800} className="object-contain w-full h-full" />
             </div>
@@ -426,7 +415,6 @@ export default function CreateTaskPage() {
         </div>
       )}
 
-      {/* Success Modal */}
       {showSuccessModal && (
         <div className="fixed inset-0 bg-gray-50 bg-opacity-95 flex items-center justify-center p-4 z-50">
           <div className="bg-white border-2 border-gray-200 rounded-lg p-8 md:p-10 max-w-md w-full shadow-lg text-center">
@@ -442,7 +430,7 @@ export default function CreateTaskPage() {
             <div className="bg-gray-50 border-2 border-gray-200 rounded-lg p-4 mb-6">
               <p className="text-xs font-bold text-gray-600 mb-2">TRANSACTION</p>
               <a 
-                href={`https://solscan.io/tx/${transactionSignature}?cluster=devnet`}
+                href={`https://solscan.io/tx/${transactionSignature}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="font-mono text-xs break-all text-[#3C5A99] hover:underline block"
