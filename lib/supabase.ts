@@ -20,6 +20,7 @@ export type Task = {
   status: 'active' | 'ended' | 'paid'
   winner_wallet?: string
   escrow_signature?: string
+  payout_signature?: string
   created_at: string
   updated_at: string
 }
